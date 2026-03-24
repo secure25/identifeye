@@ -1,0 +1,23 @@
+ALTER TABLE "application_details" ALTER COLUMN "first_name" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "last_name" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "date_of_birth" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "place_of_birth_city" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "place_of_birth_province" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "place_of_birth_country" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "address_house" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "address_street" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "address_suburb" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "address_city" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "address_province" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "address_country" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "phone_primary" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "application_details" ALTER COLUMN "email" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_profiles" ALTER COLUMN "place_of_birth_city" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_profiles" ALTER COLUMN "place_of_birth_province" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_profiles" ALTER COLUMN "place_of_birth_country" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_profiles" ALTER COLUMN "address_house" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_profiles" ALTER COLUMN "address_street" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_profiles" ALTER COLUMN "address_suburb" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_profiles" ALTER COLUMN "address_city" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_profiles" ALTER COLUMN "address_province" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_profiles" ALTER COLUMN "address_country" DROP NOT NULL;
