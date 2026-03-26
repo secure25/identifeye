@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "i-want-you-to-build-",
-    "slug": "i-want-you-to-build",
+    "name": "IDentifEYE",
+    "slug": "identifeye",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/app-icon-the.png",
+    "icon": "./assets/images/id-logo.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/app-icon-the.png",
+      "image": "./assets/images/id-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
@@ -20,13 +20,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/app-icon-the.png",
+        "foregroundImage": "./assets/images/id-logo.png",
         "backgroundColor": "#000000"
       },
       "package": "com.placeholder.app"
     },
     "web": {
-      "favicon": "./assets/images/final_quest_240x240.png",
+      "favicon": "./assets/images/id-logo.png",
       "bundler": "metro"
     },
     "plugins": [
@@ -42,7 +42,10 @@
     },
     "extra": {
       "router": {},
-      "backendUrl": "https://rqzuydsngt6qc4uhcjt5dxathqbvy8cf.app.specular.dev"
+      "backendUrl": "http://192.168.0.244:3001",
+      "eas": {
+        "projectId": "f0a3caac-57ea-4947-8600-3ad4dcd68d75"
+      }
     }
   }
 }

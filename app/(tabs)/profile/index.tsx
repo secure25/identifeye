@@ -46,7 +46,6 @@ export default function ProfileScreen() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [biometricEnabled, setBiometricEnabled] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -55,8 +54,23 @@ export default function ProfileScreen() {
   const fetchProfile = async () => {
     console.log("[Profile] Fetching profile data");
     try {
-      const data = await apiGet<ProfileData>("/api/profile");
-      setProfile(data ?? {});
+      const data = await apiGet<any>("/api/profile");
+      setProfile({
+        first_name: data.first_name,
+        last_name: data.last_name,
+        date_of_birth: data.date_of_birth,
+        place_of_birth: data.place_of_birth_city,
+        id_number: data.id_number,
+        house_number: data.address_house,
+        street: data.address_street,
+        suburb: data.address_suburb,
+        city: data.address_city,
+        province: data.address_province,
+        country: data.address_country,
+        phone_primary: data.phone_primary,
+        phone_secondary: data.phone_secondary,
+        email: data.email,
+      });
     } catch (e) {
       console.log("[Profile] Fetch error:", e);
     } finally {
@@ -68,7 +82,22 @@ export default function ProfileScreen() {
     console.log("[Profile] Saving profile data");
     setSaving(true);
     try {
-      await apiPost("/api/profile", profile);
+      await apiPost("/api/profile", {
+        first_name: profile.first_name,
+        last_name: profile.last_name,
+        date_of_birth: profile.date_of_birth,
+        place_of_birth_city: profile.place_of_birth,
+        address_house: profile.house_number,
+        address_street: profile.street,
+        address_suburb: profile.suburb,
+        address_city: profile.city,
+        address_province: profile.province,
+        address_country: profile.country ?? "South Africa",
+        phone_primary: profile.phone_primary ?? "",
+        phone_secondary: profile.phone_secondary,
+        email: profile.email ?? user?.email ?? "",
+        id_number: profile.id_number,
+      });
       setEditing(false);
       console.log("[Profile] Profile saved successfully");
     } catch (e: any) {
@@ -318,15 +347,17 @@ export default function ProfileScreen() {
           {/* Security */}
           <SectionCard title={t("security")} icon={<Shield size={18} color={C.primary} />} C={C}>
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-              <Text style={{ fontSize: 14, color: C.text, fontFamily: "Outfit_400Regular" }}>
-                {t("biometric_login")}
-              </Text>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 14, color: C.text, fontFamily: "Outfit_400Regular" }}>
+                  {t("biometric_login")}
+                </Text>
+                <Text style={{ fontSize: 12, color: C.textSecondary, fontFamily: "Outfit_400Regular", marginTop: 2 }}>
+                  Coming soon
+                </Text>
+              </View>
               <Switch
-                value={biometricEnabled}
-                onValueChange={(v) => {
-                  console.log("[Profile] Biometric toggle:", v);
-                  setBiometricEnabled(v);
-                }}
+                value={false}
+                disabled
                 trackColor={{ false: C.border, true: C.primary }}
                 thumbColor="#FFFFFF"
               />

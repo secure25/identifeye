@@ -9,13 +9,13 @@ import {
   RefreshControl,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Search, Clock, CheckCircle, Circle, XCircle, Package } from "lucide-react-native";
+import { Search, Clock, CheckCircle, Circle, XCircle, Package, PlayCircle } from "lucide-react-native";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { COLORS, DARK_COLORS } from "@/constants/Colors";
 import { Application } from "@/components/ApplicationCard";
 import { StatusBadge, ApplicationStatus } from "@/components/StatusBadge";
 import { AnimatedPressable } from "@/components/AnimatedPressable";
-import { apiGet } from "@/utils/api";
+import { apiGet, apiPost } from "@/utils/api";
 
 // Normalize backend response (application_type → document_type, fee_amount → fee)
 function normalizeApp(a: any): Application {
@@ -115,7 +115,7 @@ function StatusTimeline({ status }: { status: ApplicationStatus }) {
   );
 }
 
-function ApplicationStatusCard({ application, index }: { application: Application; index: number }) {
+function ApplicationStatusCard({ application, index, onStatusAdvanced }: { application: Application; index: number; onStatusAdvanced: () => void }) {
   const colorScheme = useColorScheme();
   const C = colorScheme === "dark" ? DARK_COLORS : COLORS;
   const { t } = useLanguage();
@@ -131,11 +131,26 @@ function ApplicationStatusCard({ application, index }: { application: Applicatio
   }, []);
 
   const [expanded, setExpanded] = useState(false);
+  const [simulating, setSimulating] = useState(false);
   const refDisplay = application.reference_number ?? application.id?.slice(0, 8).toUpperCase();
   const typeLabel = application.document_type === "passport" ? t("passport") : t("id_document");
   const dateDisplay = application.created_at
     ? new Date(application.created_at).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })
     : "—";
+
+  const canSimulate = ["submitted", "processing", "approved"].includes(application.status);
+
+  const handleSimulate = async () => {
+    setSimulating(true);
+    try {
+      await apiPost(`/api/applications/${application.id}/simulate-status`, {});
+      onStatusAdvanced();
+    } catch (e) {
+      console.log("[Status] Simulate error:", e);
+    } finally {
+      setSimulating(false);
+    }
+  };
 
   return (
     <Animated.View style={{ opacity, transform: [{ translateY }] }}>
@@ -179,6 +194,17 @@ function ApplicationStatusCard({ application, index }: { application: Applicatio
           <Text style={{ fontSize: 12, color: C.primary, fontFamily: "Outfit_600SemiBold", marginTop: 8, textAlign: "center" }}>
             {expanded ? "▲ Hide timeline" : "▼ View timeline"}
           </Text>
+
+          {canSimulate && (
+            <AnimatedPressable onPress={handleSimulate} disabled={simulating} style={{ marginTop: 12 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: C.primaryMuted, borderRadius: 10, paddingVertical: 10, borderWidth: 1, borderColor: C.primary }}>
+                <PlayCircle size={16} color={C.primary} />
+                <Text style={{ fontSize: 13, color: C.primary, fontFamily: "Outfit_600SemiBold" }}>
+                  {simulating ? "Advancing..." : "Simulate Next Status"}
+                </Text>
+              </View>
+            </AnimatedPressable>
+          )}
         </View>
       </AnimatedPressable>
     </Animated.View>
@@ -308,7 +334,7 @@ export default function StatusScreen() {
           data={filtered}
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
-            <ApplicationStatusCard application={item} index={index} />
+            <ApplicationStatusCard application={item} index={index} onStatusAdvanced={fetchApplications} />
           )}
           contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
           showsVerticalScrollIndicator={false}

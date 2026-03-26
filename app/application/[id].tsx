@@ -226,6 +226,87 @@ export default function ApplicationDetailScreen() {
   const refDisplay = app.reference_number ?? app.id?.slice(0, 8).toUpperCase();
   const reviewStep = isMinor ? 6 : 4;
   const isReviewStep = currentStep === reviewStep;
+  const isReadOnly = ["submitted", "processing", "approved", "ready_for_collection", "rejected"].includes(app.status);
+
+  // Read-only view for submitted/processed applications
+  if (isReadOnly) {
+    return (
+      <View style={{ flex: 1, backgroundColor: C.background }}>
+        <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+          {/* Status banner */}
+          <View style={{ backgroundColor: C.primaryMuted, borderRadius: 16, padding: 16, marginBottom: 20, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: C.primary }}>
+            <CheckCircle size={24} color={C.primary} />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: C.primary, fontFamily: "Outfit_700Bold" }}>
+                {typeLabel} — {subtypeLabel}
+              </Text>
+              <Text style={{ fontSize: 13, color: C.textSecondary, fontFamily: "Outfit_400Regular", marginTop: 2 }}>
+                Status: {app.status.replace(/_/g, " ").toUpperCase()}
+              </Text>
+            </View>
+          </View>
+
+          <ReviewSection title="Application" C={C}>
+            <ReviewRow label={t("reference_number")} value={refDisplay} mono C={C} />
+            <ReviewRow label={t("fee")} value={feeDisplay} C={C} />
+          </ReviewSection>
+
+          <ReviewSection title={t("personal_details")} C={C}>
+            <ReviewRow label={t("first_name")} value={app.first_name} C={C} />
+            <ReviewRow label={t("last_name")} value={app.last_name} C={C} />
+            <ReviewRow label={t("date_of_birth")} value={app.date_of_birth} C={C} />
+            <ReviewRow label={t("id_number")} value={app.id_number} C={C} />
+          </ReviewSection>
+
+          <ReviewSection title={t("place_of_birth")} C={C}>
+            <ReviewRow label={t("city")} value={app.birth_city} C={C} />
+            <ReviewRow label={t("country")} value={app.birth_country} C={C} />
+          </ReviewSection>
+
+          <ReviewSection title={t("address_details")} C={C}>
+            <ReviewRow label={t("house_number")} value={app.house_number} C={C} />
+            <ReviewRow label={t("street")} value={app.street} C={C} />
+            <ReviewRow label={t("city")} value={app.city} C={C} />
+            <ReviewRow label={t("province")} value={app.province} C={C} />
+          </ReviewSection>
+
+          <ReviewSection title={t("contact_details")} C={C}>
+            <ReviewRow label={t("phone_number")} value={app.phone_primary} C={C} />
+            <ReviewRow label={t("email_address")} value={app.email} C={C} />
+          </ReviewSection>
+
+          {isMinor && (
+            <ReviewSection title={t("guardian_details")} C={C}>
+              <ReviewRow label={t("guardian_name")} value={app.guardian_name} C={C} />
+              <ReviewRow label={t("guardian_surname")} value={app.guardian_surname} C={C} />
+              <ReviewRow label={t("guardian_id_number")} value={app.guardian_id_number} C={C} />
+            </ReviewSection>
+          )}
+
+          {app.status === "ready_for_collection" && (
+            <View style={{ backgroundColor: "rgba(42,200,100,0.1)", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "#2AC864", flexDirection: "row", gap: 12, alignItems: "flex-start" }}>
+              <CheckCircle size={22} color="#2AC864" style={{ marginTop: 2 }} />
+              <Text style={{ flex: 1, fontSize: 14, color: C.text, fontFamily: "Outfit_400Regular", lineHeight: 22 }}>
+                {"Please go to your nearest Home Affairs office closest to your residential address to collect your "}
+                {app.document_type === "passport" ? "Passport" : "ID"}
+                {" using your reference number "}
+                <Text style={{ fontFamily: "SpaceMono", fontWeight: "700", color: C.primary }}>{refDisplay}</Text>
+                {"."}
+              </Text>
+            </View>
+          )}
+
+          <AnimatedPressable onPress={() => router.back()}>
+            <View style={{ backgroundColor: C.surfaceSecondary, borderRadius: 14, paddingVertical: 15, alignItems: "center", borderWidth: 1, borderColor: C.border, marginTop: 8 }}>
+              <Text style={{ fontSize: 15, fontWeight: "600", color: C.textSecondary, fontFamily: "Outfit_600SemiBold" }}>
+                {t("back")}
+              </Text>
+            </View>
+          </AnimatedPressable>
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: C.background }}>

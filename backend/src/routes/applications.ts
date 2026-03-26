@@ -641,6 +641,69 @@ export function registerApplicationRoutes(app: App) {
       status_updates: updates.map(convertStatusUpdateToResponse),
     });
   });
+
+  // Status simulation endpoint — advances application through the status pipeline
+  app.fastify.post('/api/applications/:id/simulate-status', {
+    schema: {
+      description: 'Simulate status progression for demo purposes',
+      tags: ['applications'],
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: { id: { type: 'string', format: 'uuid' } },
+      },
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            status: { type: 'string' },
+            message: { type: 'string' },
+          },
+        },
+      },
+    },
+  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+    const session = await requireAuth(request, reply);
+    if (!session) return;
+
+    const application = await app.db.query.applications.findFirst({
+      where: eq(schema.applications.id, request.params.id),
+    });
+
+    if (!application) return reply.status(404).send({ error: 'Application not found' });
+    if (application.userId !== session.user.id) return reply.status(403).send({ error: 'Unauthorized' });
+
+    const pipeline = ['submitted', 'processing', 'approved', 'ready_for_collection'];
+    const messages: Record<string, string> = {
+      processing: 'Your application is being processed by Home Affairs.',
+      approved: 'Your application has been approved.',
+      ready_for_collection: 'Your document is ready for collection at your nearest Home Affairs office.',
+    };
+
+    const currentIndex = pipeline.indexOf(application.status);
+    if (currentIndex === -1 || currentIndex === pipeline.length - 1) {
+      return reply.send({ id: application.id, status: application.status, message: 'Already at final status.' });
+    }
+
+    const nextStatus = pipeline[currentIndex + 1];
+    const message = messages[nextStatus] ?? `Status updated to ${nextStatus}`;
+
+    const [updated] = await app.db
+      .update(schema.applications)
+      .set({ status: nextStatus, updatedAt: new Date() })
+      .where(eq(schema.applications.id, application.id))
+      .returning();
+
+    await app.db.insert(schema.statusUpdates).values({
+      applicationId: application.id,
+      status: nextStatus,
+      message,
+    });
+
+    app.logger.info({ applicationId: application.id, newStatus: nextStatus }, 'Status simulated');
+    return reply.send({ id: updated.id, status: nextStatus, message });
+  });
 }
 
 function calculateFeeAmount(applicationType: string, applicationSubtype: string): number {

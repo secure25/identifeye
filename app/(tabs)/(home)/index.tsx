@@ -6,6 +6,7 @@ import {
   Animated,
   useColorScheme,
   RefreshControl,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -177,7 +178,11 @@ export default function HomeScreen() {
             }}
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 8 }}>
-              <Shield size={20} color="rgba(255,255,255,0.9)" />
+              <Image
+                source={require("../../../assets/images/id-logo.png")}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
               <Text style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontFamily: "Outfit_600SemiBold", letterSpacing: 1.5 }}>
                 IDENTIFEYE
               </Text>

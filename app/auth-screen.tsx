@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
@@ -107,7 +108,7 @@ export default function AuthScreen() {
       if (tab === "signin") {
         await signInWithEmail(email, password);
       } else {
-        await signUpWithEmail(email, password, name);
+        await signUpWithEmail(email, password, name, haIdNumber || undefined);
       }
     } catch (e: any) {
       console.log("[AuthScreen] Email auth error:", e?.message);
@@ -185,24 +186,11 @@ export default function AuthScreen() {
               marginBottom: 32,
             }}
           >
-            <View
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 40,
-                backgroundColor: COLORS.primary,
-                alignItems: "center",
-                justifyContent: "center",
-                borderWidth: 3,
-                borderColor: "rgba(255,255,255,0.3)",
-                marginBottom: 16,
-                boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-              }}
-            >
-              <Text style={{ fontSize: 28, fontWeight: "800", color: "#FFFFFF", fontFamily: "Outfit_700Bold" }}>
-                ID
-              </Text>
-            </View>
+            <Image
+              source={require("../assets/images/id-logo.png")}
+              style={{ width: 100, height: 100, marginBottom: 16 }}
+              resizeMode="contain"
+            />
             <Text style={{ fontSize: 32, fontWeight: "800", color: "#FFFFFF", fontFamily: "Outfit_700Bold", letterSpacing: -0.5 }}>
               IDentifEYE
             </Text>

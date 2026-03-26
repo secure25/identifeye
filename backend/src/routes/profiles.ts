@@ -6,7 +6,7 @@ import * as schema from '../db/schema/schema.js';
 interface UserProfileInput {
   first_name: string;
   last_name: string;
-  date_of_birth: string;
+  date_of_birth?: string;
   place_of_birth_city?: string;
   place_of_birth_province?: string;
   place_of_birth_country?: string;
@@ -16,7 +16,7 @@ interface UserProfileInput {
   address_city?: string;
   address_province?: string;
   address_country?: string;
-  phone_primary: string;
+  phone_primary?: string;
   phone_secondary?: string;
   email: string;
   id_number?: string;
@@ -96,7 +96,7 @@ export function registerProfileRoutes(app: App) {
       tags: ['profile'],
       body: {
         type: 'object',
-        required: ['first_name', 'last_name', 'date_of_birth', 'phone_primary', 'email'],
+        required: ['first_name', 'last_name', 'email'],
         properties: {
           first_name: { type: 'string' },
           last_name: { type: 'string' },
@@ -153,7 +153,7 @@ export function registerProfileRoutes(app: App) {
     const updateData = {
       firstName: request.body.first_name,
       lastName: request.body.last_name,
-      dateOfBirth: request.body.date_of_birth,
+      dateOfBirth: request.body.date_of_birth ?? '',
       placeOfBirthCity: request.body.place_of_birth_city,
       placeOfBirthProvince: request.body.place_of_birth_province,
       placeOfBirthCountry: request.body.place_of_birth_country,
@@ -163,7 +163,7 @@ export function registerProfileRoutes(app: App) {
       addressCity: request.body.address_city,
       addressProvince: request.body.address_province,
       addressCountry: request.body.address_country,
-      phonePrimary: request.body.phone_primary,
+      phonePrimary: request.body.phone_primary ?? '',
       phoneSecondary: request.body.phone_secondary,
       email: request.body.email,
       idNumber: request.body.id_number,

@@ -14,7 +14,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string, name?: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string, name?: string, idNumber?: string) => Promise<void>;
   signInWithApple: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -115,9 +115,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await fetchUser();
   };
 
-  const signUpWithEmail = async (email: string, password: string, name?: string) => {
+  const signUpWithEmail = async (email: string, password: string, name?: string, idNumber?: string) => {
     await authClient.signUp.email({ email, password, name });
     await fetchUser();
+    // Pre-fill profile with verified details after sign up
+    if (name || idNumber) {
+      try {
+        const nameParts = name?.trim().split(" ") ?? [];
+        const firstName = nameParts[0] ?? "";
+        const lastName = (nameParts.slice(1).join(" ")) || (nameParts[0] ?? "");
+        const { apiPost: post } = await import("@/utils/api");
+        await post("/api/profile", {
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          id_number: idNumber ?? "",
+          phone_primary: "",
+          date_of_birth: "",
+        });
+      } catch (e) {
+        console.log("[Auth] Profile pre-fill failed (non-critical):", e);
+      }
+    }
   };
 
   const signInWithSocial = async (provider: string) => {
