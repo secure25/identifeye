@@ -42,7 +42,7 @@
     },
     "extra": {
       "router": {},
-      "backendUrl": "http://192.168.0.244:3001",
+      "backendUrl": "https://identifeye-production.up.railway.app",
       "eas": {
         "projectId": "f0a3caac-57ea-4947-8600-3ad4dcd68d75"
       }
