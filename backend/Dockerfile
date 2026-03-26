@@ -17,4 +17,4 @@ COPY . .
 RUN npm run build
 
 # Run migrations then start the server
-CMD ["sh", "-c", "npm run db:migrate && node --import @specific-dev/framework/telemetry dist/index.js"]
+CMD ["sh", "-c", "npm run db:migrate && node dist/index.js"]
